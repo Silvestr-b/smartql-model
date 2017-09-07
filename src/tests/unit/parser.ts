@@ -10,25 +10,74 @@ describe('ModelsParser', () => {
 	const factory = <entities.IModelFactory>{create: () => model}
 	const factorySpy = spy(factory, 'create');
 	const parser = new ModelsParser(factory);
-	const correctSmartQlModel = {
-		resource: 'User',
-		fields: ['id', 'name', 'age'],
-		inclusions: {
-			post: 'Post',
-			friends: 'User'
-		}
-	}
 
 	describe('parse', () => {
 
-		it('currect', () => {
-			const result = parser.parse([correctSmartQlModel])
+		describe('currect', () => {
+			afterEach(() => {
+				factorySpy.reset();
+			})
 
-			expect(result[0]).to.be.equal(model);
+			it('full', () => {
+				const result = parser.parse([samples.currect])
+
+				expect(result[0]).to.be.equal(model);
+				expect(factorySpy.calledWith(
+					samples.currect.resource,
+					samples.currect.fields,
+					samples.currect.inclusions
+				)).to.be.true;			
+			})
+
+			it('withoutInclusions', () => {
+				parser.parse([samples.withoutInclusions]);
+
+				expect(factorySpy.calledWith(
+					samples.withoutInclusions.resource,
+					samples.withoutInclusions.fields,
+					{}
+				)).to.be.true;
+			})
+
+			it('withEmptyInclusions', () => {
+				parser.parse([samples.withEmptyInclusions]);
+
+				expect(factorySpy.calledWith(
+					samples.withEmptyInclusions.resource,
+					samples.withEmptyInclusions.fields,
+					samples.withEmptyInclusions.inclusions
+				)).to.be.true;
+			})
+
 		})
 
-		it('uncurrect', () => {
-			expect(() => parser.parse([(<restqlModel.RestqlModel>{})])).to.throw(/Uncorrect model declaration/)
+		describe('uncurrect', () => {
+
+			it('withoutName', () => {
+				expect(() => parser.parse([samples.withoutName])).to.throw(/Uncorrect model declaration/)
+			})
+
+			it('withUncorrectName', () => {
+				expect(() => parser.parse([samples.withUncorrectName])).to.throw(/Uncorrect model declaration/)
+			})
+
+			it('withoutFields', () => {
+				expect(() => parser.parse([samples.withoutFields])).to.throw(/Uncorrect model declaration/)
+			})
+
+			it('withEmptyFields', () => {
+				expect(() => parser.parse([samples.withEmptyFields])).to.throw(/Uncorrect model declaration/)
+			})
+
+			it('withUncorrectnclusions', () => {
+				expect(() => parser.parse([samples.withUncorrectInclusions])).to.throw(/Uncorrect model declaration/)
+			})
+
+			it('withUncorrectInclusion', () => {
+				expect(() => parser.parse([samples.withUncorrectInclusion])).to.throw(/Uncorrect model declaration/)
+			})
+
+			
 		})
 
 	})
