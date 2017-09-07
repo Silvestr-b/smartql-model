@@ -8,15 +8,15 @@ class ModelsParser implements entities.IModelsParser {
 
 	parse(restqlModels: restqlModel.RestqlModel[]){
 		const models = restqlModels.map(restqlModel => {
-			if(!this.isValidName(restqlModel.resource)) throw new Error('Uncorrect model declaration')
-			if(!this.isValidFields(restqlModel.fields)) throw new Error('Uncorrect model declaration')
-			if(restqlModel.inclusions && !this.isValidInclusions(restqlModel.inclusions)) throw new Error('Uncorrect model declaration')
-
 			const name = restqlModel.resource;
 			const fields = restqlModel.fields;
-			const inclusions = restqlModel.inclusions;
+			const inclusions = restqlModel.inclusions || {};
 
-			return this.modelFactory.create(name, fields, inclusions || {})
+			if(!this.isValidName(name)) throw new Error('Uncorrect model declaration')
+			if(!this.isValidFields(fields)) throw new Error('Uncorrect model declaration')
+			if(!this.isValidInclusions(inclusions)) throw new Error('Uncorrect model declaration')
+
+			return this.modelFactory.create(name, fields, inclusions)
 		})
 
 		return models
