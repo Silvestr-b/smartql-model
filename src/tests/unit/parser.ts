@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { stub, spy } from 'sinon'
 import { ModelsParser } from '../../implementations/models-parser'
 import { entities, restqlModel } from '../../interfaces'
+import * as samples from './models'
 
 
 describe('ModelsParser', () => {
@@ -26,26 +27,8 @@ describe('ModelsParser', () => {
 			expect(result[0]).to.be.equal(model);
 		})
 
-		describe('uncurrect', () => {
-
-			it('hasn`t name', () => {
-				expect(() => parser.parse([
-					Object.assign({}, correctSmartQlModel, {resource: undefined})
-				])).to.throw(/Uncorrect model declaration/)
-			})
-
-			it('hasn`t fields', () => {
-				expect(() => parser.parse([
-					Object.assign({}, correctSmartQlModel, {fields: undefined})
-				])).to.throw(/Uncorrect model declaration/)
-			})
-
-			it('hasn`t inclusions', () => {
-				expect(() => parser.parse([
-					Object.assign({}, correctSmartQlModel, {inclusions: undefined})
-				])).to.throw(/Uncorrect model declaration/)
-			})
-			
+		it('uncurrect', () => {
+			expect(() => parser.parse([(<restqlModel.RestqlModel>{})])).to.throw(/Uncorrect model declaration/)
 		})
 
 	})
